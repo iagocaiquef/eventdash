@@ -8,8 +8,8 @@ import {
 //  ⚙️  CONFIGURAÇÃO — preencha após seguir o guia de setup
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
-  CLIENT_ID: "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com",
-  SHEET_ID:  "ID_DA_SUA_PLANILHA_AQUI",
+  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+  SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   // Aba da planilha onde ficam os lançamentos (padrão: "Lançamentos")
   SHEET_TAB: "Lançamentos",
 };
