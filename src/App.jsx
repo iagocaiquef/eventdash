@@ -244,7 +244,7 @@ export default function App() {
           desc:   r[1]?.trim() || "",
           cat:    r[2]?.trim() || "",
           date:   r[3]?.trim() || "",
-          val:    parseFloat((r[4]||"0").replace(/[R$\s.]/g,"").replace(",",".")) || 0,
+          val: parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",",".")) || 0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
