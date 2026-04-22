@@ -234,7 +234,7 @@ export default function App() {
     try {
       const res = await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: CONFIG.SHEET_ID,
-        range: `${CONFIG.SHEET_TAB}!A2:E1000`,
+        range: `${CONFIG.SHEET_TAB}!B3:F1000`,
       });
       const rows = (res.result.values || [])
         .filter(r => r[0] && r[4])
