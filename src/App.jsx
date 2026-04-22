@@ -136,7 +136,7 @@ export default function App(){
           cat:   r[2]?.trim()||"",
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
-          publico:parseInt((r[5]||"0").toString().replace(/\D/g,""))||0,
+          publico:parseInt((r[5]||"0").toString().replace(/\./g,"").replace(",","."))||0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
