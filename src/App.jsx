@@ -156,11 +156,22 @@ export default function App(){
     events.map((ev,i)=>{
       const rows=rawRows.filter(r=>r.evento===ev);
       const stats=calcStats(rows,publicoMap);
-      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length};
+      const dates=rows.map(r=>r.date).filter(Boolean);
+      const date=dates[0]||"";
+      const year=date.split("/")[2]||date.split("-")[0]||"";
+      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length,date,year};
     }),
   [events,rawRows,publicoMap]);
 
-  const filtered=useMemo(()=>selectedEv==="all"?rawRows:rawRows.filter(r=>r.evento===selectedEv),[rawRows,selectedEv]);
+  const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
+const[selectedAno,setSelectedAno]=useState("all");
+const filtered=useMemo(()=>{
+  let rows=selectedAno==="all"?rawRows:rawRows.filter(r=>{
+    const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";
+    return y===selectedAno;
+  });
+  return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
+},[rawRows,selectedEv,selectedAno]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
 
   const pieRec =useMemo(()=>filtered.filter(e=>e.cat==="Receita").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
@@ -220,15 +231,23 @@ export default function App(){
         )}
 
         {token&&rawRows.length>0&&(<>
+         {/* ANO SELECTOR */}
+          <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
+            <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
+            {anos.map(ano=>(
+              <Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>
+            ))}
+          </div>
           {/* EVENT SELECTOR */}
           <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap",alignItems:"center"}}>
             <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Filtrar:</p>
             <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
-            {eventStats.map(ev=>(
-              <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
-                sub={ev.res>=0?`✅ ${fmtP(ev.marg)}`:`⚠️ ${fmtP(ev.marg)}`}
-                onClick={()=>setSelectedEv(ev.name)}/>
-            ))}
+            {eventStats.filter(ev=>selectedAno==="all"||ev.year===selectedAno).map(ev=>(
+                <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
+                  sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"✅":"⚠️"} ${fmtP(ev.marg)}`}
+                  onClick={()=>setSelectedEv(ev.name)}/>
+              ))}
           </div>
 
           {/* TITLE */}
@@ -454,6 +473,7 @@ export default function App(){
                       <div>
                         <span style={{background:C.bg,color:C.muted,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 8px"}}>#{i+1}</span>
                         <p style={{fontSize:14,fontWeight:700,marginTop:5,lineHeight:1.3}}>{ev.name}</p>
+                        {ev.date&&<p style={{fontSize:11,color:C.textDim,marginTop:2}}>📅 {ev.date}</p>}
                       </div>
                       <span style={{fontSize:18}}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":"📊"}</span>
                     </div>
