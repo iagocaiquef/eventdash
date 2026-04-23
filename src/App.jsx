@@ -208,7 +208,7 @@ export default function App(){
         range:`${CONFIG.SHEET_TAB}!B3:I1000`,
       });
       const rows=(res.result.values||[])
-        .filter(r=>r[0]&&r[4])
+        .filter(r=>r[0]&&(r[4]||r[6]))
         .map((r,i)=>({
           id:i,
           evento:r[0]?.trim()||"",
