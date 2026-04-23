@@ -6,8 +6,8 @@ import {
 } from "recharts";
 
 const CONFIG = {
-  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
-SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
+  CLIENT_ID: "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com",
+  SHEET_ID:  "ID_DA_SUA_PLANILHA_AQUI",
   SHEET_TAB: "Lançamentos",
 };
 
@@ -15,7 +15,7 @@ const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
 const C = {
   bg:"#080B14",surface:"#0F1220",card:"#161A2E",border:"#1E2340",
-  accent1:"#00F0C0",accent2:"#FF3D6B",accent3:"#7C6AF7",accent4:"#FFB547",accent5:"#38BDF8",
+  accent1:"#00F0C0",accent2:"#FF3D6B",accent3:"#7C6AF7",accent4:"#FFB547",accent5:"#38BDF8",accent6:"#F472B6",
   muted:"#4A5168",text:"#DCE4F5",textDim:"#6B7A99",
 };
 const ECOLS=["#00F0C0","#FF3D6B","#7C6AF7","#FFB547","#38BDF8","#86EFAC","#FB923C","#F472B6"];
@@ -89,6 +89,9 @@ export default function App(){
   const[selectedEv,setSelectedEv]=useState("all");
   const[tab,setTab]=useState("overview");
   const[lastSync,setLastSync]=useState(null);
+  const[selectedAno,setSelectedAno]=useState("all");
+  const[selectedTipo,setSelectedTipo]=useState("all");
+  const[selectedVisao,setSelectedVisao]=useState("Evento");
 
   const configured=CONFIG.CLIENT_ID!=="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
 
@@ -125,10 +128,10 @@ export default function App(){
     try{
       const res=await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId:CONFIG.SHEET_ID,
-        range:`${CONFIG.SHEET_TAB}!B3:G1000`,
+        range:`${CONFIG.SHEET_TAB}!B3:H1000`,
       });
       const rows=(res.result.values||[])
-        .filter(r=>r[0]&&r[4]&&r[4].toString().trim()!=="")
+        .filter(r=>r[0]&&r[4])
         .map((r,i)=>({
           id:i,
           evento:r[0]?.trim()||"",
@@ -137,6 +140,7 @@ export default function App(){
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
           publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0),
+          visao:(r[6]?.trim()||"Evento"),
         }));
       setRawRows(rows);
       setLastSync(new Date());
@@ -156,33 +160,18 @@ export default function App(){
     events.map((ev,i)=>{
       const rows=rawRows.filter(r=>r.evento===ev);
       const stats=calcStats(rows,publicoMap);
-      const dates=rows.map(r=>r.date).filter(Boolean);
-    const date=dates[0]||"";
-      const year=date.split("/")[2]||date.split("-")[0]||"";
-      const temCache=rows.some(r=>r.desc?.toLowerCase().includes("cach"));
-      const temPorta=rows.some(r=>r.desc?.toLowerCase().includes("venda de ingresso"));
-      const tipo=temPorta?"porta":temCache?"cache":"porta";
-      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length,date,year,tipo};
+      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length};
     }),
   [events,rawRows,publicoMap]);
 
-const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
-const[selectedAno,setSelectedAno]=useState("all");
-const[selectedTipo,setSelectedTipo]=useState("all");
-const filtered=useMemo(()=>{
-  const evsFiltrados=new Set(
-    eventStats
-      .filter(e=>selectedTipo==="all"||e.tipo===selectedTipo)
-      .filter(e=>selectedAno==="all"||e.year===selectedAno)
-      .map(e=>e.name)
-  );
-  let rows=rawRows.filter(r=>evsFiltrados.has(r.evento));
-  if(selectedAno!=="all") rows=rows.filter(r=>{
-    const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";
-    return y===selectedAno;
-  });
-  return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
-},[rawRows,selectedEv,selectedAno,selectedTipo,eventStats]);
+  const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
+  const filtered=useMemo(()=>{
+    let rows=rawRows.filter(r=>r.visao===selectedVisao);
+    if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";return y===selectedAno;});
+    const evOk=new Set(eventStats.filter(e=>selectedTipo==="all"||e.tipo===selectedTipo).map(e=>e.name));
+    rows=rows.filter(r=>evOk.has(r.evento));
+    return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
+  },[rawRows,selectedEv,selectedAno,selectedTipo,selectedVisao,eventStats]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
 
   const pieRec =useMemo(()=>filtered.filter(e=>e.cat==="Receita").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
@@ -242,36 +231,47 @@ const filtered=useMemo(()=>{
         )}
 
         {token&&rawRows.length>0&&(<>
-        {/* TIPO SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+
+          {/* VISÃO SELECTOR */}
+          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Visão:</p>
+            <Chip label="🎪 Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
+            <Chip label="🎤 Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
+          </div>
+
+          {/* MODELO SELECTOR */}
+          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
             <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Modelo:</p>
             <Chip label="Todos" selected={selectedTipo==="all"} color={C.accent1} onClick={()=>setSelectedTipo("all")}/>
             <Chip label="🎟️ Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
             <Chip label="🎤 Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
           </div>
+
           {/* ANO SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
             <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
             <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
-            {anos.map(ano=>(
-              <Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>
-            ))}
+            {anos.map(ano=>(<Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>))}
           </div>
+
           {/* EVENT SELECTOR */}
           <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Filtrar:</p>
+            <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Evento:</p>
             <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
-         {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
-                <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
-                  sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"✅":"⚠️"} ${fmtP(ev.marg)}`}
-                  onClick={()=>setSelectedEv(ev.name)}/>
-              ))}
+            {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
+              <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
+                sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"✅":"⚠️"} ${fmtP(ev.marg)}`}
+                onClick={()=>setSelectedEv(ev.name)}/>
+            ))}
           </div>
 
           {/* TITLE */}
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
             <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?C.accent3:eventStats.find(e=>e.name===selectedEv)?.color||C.accent1}}/>
             <h2 style={{fontSize:20,fontWeight:800,letterSpacing:"-0.02em"}}>{selName}</h2>
+            <span style={{background:selectedVisao==="Artista"?"#2e1040":"#0a1e2e",color:selectedVisao==="Artista"?C.accent6:C.accent5,fontSize:11,fontWeight:700,borderRadius:20,padding:"3px 12px"}}>
+              {selectedVisao==="Artista"?"🎤 Artista":"🎪 Evento"}
+            </span>
             {selectedEv!=="all"&&(
               <span style={{background:stats.res>=0?"#0a2e1e":"#2e0a14",color:stats.res>=0?C.accent1:C.accent2,fontSize:11,fontWeight:700,borderRadius:20,padding:"3px 12px"}}>
                 {stats.res>=0?"✅ Lucrativo":"⚠️ Prejuízo"}
@@ -491,8 +491,6 @@ const filtered=useMemo(()=>{
                       <div>
                         <span style={{background:C.bg,color:C.muted,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 8px"}}>#{i+1}</span>
                         <p style={{fontSize:14,fontWeight:700,marginTop:5,lineHeight:1.3}}>{ev.name}</p>
-                        {ev.date&&<p style={{fontSize:11,color:C.textDim,marginTop:2}}>📅 {ev.date}</p>}
-                        <span style={{background:ev.tipo==="cache"?`${C.accent4}22`:`${C.accent3}22`,color:ev.tipo==="cache"?C.accent4:C.accent3,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 10px",marginTop:4,display:"inline-block"}}>{ev.tipo==="cache"?"🎤 Cachê":"🎟️ Porta"}</span>
                       </div>
                       <span style={{fontSize:18}}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":"📊"}</span>
                     </div>
