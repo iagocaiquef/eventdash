@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
-  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+ CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -128,7 +128,7 @@ export default function App(){
     try{
       const res=await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId:CONFIG.SHEET_ID,
-        range:`${CONFIG.SHEET_TAB}!B3:H1000`,
+        range:`${CONFIG.SHEET_TAB}!B3:I1000`,
       });
       const rows=(res.result.values||[])
         .filter(r=>r[0]&&r[4])
@@ -140,7 +140,7 @@ export default function App(){
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
           publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0),
-          artista:parseFloat((r[6]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
+          artista:parseFloat((r[7]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
@@ -165,6 +165,17 @@ export default function App(){
   [events,rawRows,publicoMap]);
 
   const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
+  const eventStatsVisao=useMemo(()=>
+    events.map((ev,i)=>{
+      const rows=selectedVisao==="Artista"
+        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista}))
+        : rawRows.filter(r=>r.evento===ev);
+      const s=calcStats(rows,publicoMap);
+      const base=eventStats.find(e=>e.name===ev)||{};
+      return{...base,...s,tipo:base.tipo||"porta"};
+    }),
+  [events,rawRows,publicoMap,selectedVisao,eventStats]);
+
   const filtered=useMemo(()=>{
     let rows=rawRows;
     if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";return y===selectedAno;});
@@ -177,17 +188,6 @@ export default function App(){
   },[rawRows,selectedEv,selectedAno,selectedTipo,selectedVisao,eventStats]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
 
-  // eventStats adjusted for visao
-  const eventStatsVisao=useMemo(()=>
-    events.map((ev,i)=>{
-      const rows=selectedVisao==="Artista"
-        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista}))
-        : rawRows.filter(r=>r.evento===ev);
-      const s=calcStats(rows,publicoMap);
-      const base=eventStats.find(e=>e.name===ev)||{};
-      return{...base,...s,tipo:base.tipo||"porta"};
-    }),
-  [events,rawRows,publicoMap,selectedVisao,eventStats]);
 
   const pieRec =useMemo(()=>filtered.filter(e=>e.cat==="Receita").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
   const pieDesp=useMemo(()=>filtered.filter(e=>e.cat==="Despesa").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
