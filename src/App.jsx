@@ -252,7 +252,7 @@ export default function App(){
   const eventStatsVisao=useMemo(()=>
     events.map((ev,i)=>{
       const rows=selectedVisao==="Artista"
-        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista}))
+        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista,cat:r.artista>0?r.cat:r.cat}))
         : rawRows.filter(r=>r.evento===ev);
       const s=calcStats(rows,publicoMap);
       const base=eventStats.find(e=>e.name===ev)||{};
@@ -267,7 +267,7 @@ export default function App(){
     rows=rows.filter(r=>evOk.has(r.evento));
     if(selectedEv!=="all") rows=rows.filter(r=>r.evento===selectedEv);
     // Se visão = Artista, usa coluna artista no lugar de val
-    if(selectedVisao==="Artista") rows=rows.map(r=>({...r,val:r.artista||0})).filter(r=>r.val>0);
+    if(selectedVisao==="Artista") rows=rows.filter(r=>r.artista>0).map(r=>({...r,val:r.artista}));
     return rows;
   },[rawRows,selectedEv,selectedAno,selectedTipo,selectedVisao,eventStats]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
