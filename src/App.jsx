@@ -128,7 +128,7 @@ export default function App(){
     try{
       const res=await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId:CONFIG.SHEET_ID,
-        range:`${CONFIG.SHEET_TAB}!B3:I1000`,
+        range:`${CONFIG.SHEET_TAB}!B3:H1000`,
       });
       const rows=(res.result.values||[])
         .filter(r=>r[0]&&r[4])
@@ -140,7 +140,7 @@ export default function App(){
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
           publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0),
-          artista:parseFloat((r[7]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
+          artista:parseFloat((r[6]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
