@@ -14,7 +14,7 @@ SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 
 // Cole aqui a URL da sua logo (pode ser um link do Google Drive, Imgur, etc.)
-const LOGO_URL = ""; // Cole aqui a URL da sua logo (ex: https://i.imgur.com/abc123.png)
+const LOGO_URL = "https://i.imgur.com/cGuKQVH.png";
 
 function exportPDF(selName, stats, filtered, selectedVisao, fmt, fmtP, fmtN) {
   const style = `
@@ -265,7 +265,7 @@ export default function App(){
   const selName=selectedEv==="all"?"Todos os Eventos":selectedEv;
 
   return(
-    <div style={{background:"#000000",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",color:"#F2F2F7",paddingBottom:60}}>
+    <div style={{background:"#000000",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,sans-serif",color:"#F2F2F7",paddingBottom:60}}>
 
       {/* TOP BAR */}
       <div style={{background:"#560E11",borderBottom:`3px solid #FFB100`,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
@@ -275,7 +275,7 @@ export default function App(){
             : <div style={{width:36,height:36,borderRadius:10,background:"#FFB100",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📻</div>
           }
           <div>
-            <p style={{fontSize:15,fontWeight:800,letterSpacing:"-0.02em",color:"#FFB100",fontFamily:"'Coluna Rounded','Arial Black',sans-serif"}}>Ao Vivão</p>
+            <p style={{fontSize:15,fontWeight:800,letterSpacing:"-0.02em",color:"#FFB100",fontFamily:"Arial Black,sans-serif"}}>Ao Vivão</p>
             {lastSync&&<p style={{fontSize:10,color:"#F3D39888"}}>Sincronizado {lastSync.toLocaleTimeString("pt-BR")}</p>}
           </div>
         </div>
