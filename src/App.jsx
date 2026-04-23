@@ -128,7 +128,7 @@ export default function App(){
     try{
       const res=await window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId:CONFIG.SHEET_ID,
-        range:`${CONFIG.SHEET_TAB}!B3:H1000`,
+        range:`${CONFIG.SHEET_TAB}!B3:I1000`,
       });
       const rows=(res.result.values||[])
         .filter(r=>r[0]&&r[4])
@@ -140,7 +140,7 @@ export default function App(){
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
           publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0),
-          visao:(r[6]?.trim()||"Evento"),
+          artista:parseFloat((r[7]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
@@ -166,21 +166,36 @@ export default function App(){
 
   const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
   const filtered=useMemo(()=>{
-    let rows=rawRows.filter(r=>r.visao===selectedVisao);
+    let rows=rawRows;
     if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";return y===selectedAno;});
     const evOk=new Set(eventStats.filter(e=>selectedTipo==="all"||e.tipo===selectedTipo).map(e=>e.name));
     rows=rows.filter(r=>evOk.has(r.evento));
-    return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
+    if(selectedEv!=="all") rows=rows.filter(r=>r.evento===selectedEv);
+    // Se visão = Artista, usa coluna artista no lugar de val
+    if(selectedVisao==="Artista") rows=rows.map(r=>({...r,val:r.artista||0})).filter(r=>r.val>0);
+    return rows;
   },[rawRows,selectedEv,selectedAno,selectedTipo,selectedVisao,eventStats]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
+
+  // eventStats adjusted for visao
+  const eventStatsVisao=useMemo(()=>
+    events.map((ev,i)=>{
+      const rows=selectedVisao==="Artista"
+        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista}))
+        : rawRows.filter(r=>r.evento===ev);
+      const s=calcStats(rows,publicoMap);
+      const base=eventStats.find(e=>e.name===ev)||{};
+      return{...base,...s};
+    }),
+  [events,rawRows,publicoMap,selectedVisao,eventStats]);
 
   const pieRec =useMemo(()=>filtered.filter(e=>e.cat==="Receita").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
   const pieDesp=useMemo(()=>filtered.filter(e=>e.cat==="Despesa").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
   const despCat=useMemo(()=>filtered.filter(e=>e.cat==="Despesa").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]).sort((a,b)=>b.val-a.val).slice(0,6),[filtered]);
 
-  const barData=eventStats.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,Receita:ev.rec,Despesa:ev.desp,Resultado:ev.res}));
-  const pubData=eventStats.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,Público:ev.pub,"Ticket Médio":Math.round(ev.ticket)}));
-  const roiData=eventStats.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,ROI:ev.desp>0?((ev.res/ev.desp)*100):0}));
+  const barData=eventStatsVisao.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,Receita:ev.rec,Despesa:ev.desp,Resultado:ev.res}));
+  const pubData=eventStatsVisao.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,Público:ev.pub,"Ticket Médio":Math.round(ev.ticket)}));
+  const roiData=eventStatsVisao.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,ROI:ev.desp>0?((ev.res/ev.desp)*100):0}));
 
   const pubTotal=Object.values(publicoMap).reduce((s,v)=>s+v,0);
   const selName=selectedEv==="all"?"Todos os Eventos":selectedEv;
@@ -238,6 +253,11 @@ export default function App(){
             <Chip label="🎪 Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
             <Chip label="🎤 Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
           </div>
+          {selectedVisao==="Artista"&&(
+            <div style={{background:`${C.accent6}11`,border:`1px solid ${C.accent6}33`,borderRadius:10,padding:"8px 14px",marginBottom:10,fontSize:12,color:C.accent6}}>
+              🎤 Exibindo valores da coluna <strong>Artista (R$)</strong> da planilha
+            </div>
+          )}
 
           {/* MODELO SELECTOR */}
           <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
@@ -485,7 +505,7 @@ export default function App(){
           {tab==="compare"&&(
             <div style={{display:"flex",flexDirection:"column",gap:18}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
-                {[...eventStats].sort((a,b)=>b.res-a.res).map((ev,i)=>(
+                {[...eventStatsVisao].sort((a,b)=>b.res-a.res).map((ev,i)=>(
                   <div key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{background:C.card,border:`1px solid ${selectedEv===ev.name?ev.color:C.border}`,borderLeft:`4px solid ${ev.color}`,borderRadius:14,padding:"18px 20px",cursor:"pointer",transition:"border-color .2s"}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
                       <div>
