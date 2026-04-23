@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
-  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+ CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -267,15 +267,15 @@ export default function App(){
     <div style={{background:"#000000",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,sans-serif",color:"#F2F2F7",paddingBottom:60}}>
 
       {/* TOP BAR */}
-      <div style={{background:"#560E11",borderBottom:`3px solid #FFB100`,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
+      <div style={{background:"#560E11",borderBottom:"2px solid #FFB100",padding:"12px 28px",minHeight:"70px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
+        <div style={{display:"flex",alignItems:"center",gap:14}}>
           {LOGO_URL
-            ? <img src={LOGO_URL} alt="Ao Vivão" style={{height:56,width:"auto",objectFit:"contain",filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))"}}/>
-            : <div style={{width:36,height:36,borderRadius:10,background:"#FFB100",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>AV</div>
+            ? <img src={LOGO_URL} alt="Ao Vivão" style={{height:48,width:"auto",objectFit:"contain",filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))"}}/>
+            : <div style={{width:48,height:48,borderRadius:10,background:"#FFB100",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:700,color:"#560E11"}}>AV</div>
           }
-          <div>
-            <p style={{fontSize:15,fontWeight:800,letterSpacing:"-0.02em",color:"#FFB100",fontFamily:"Arial Black,sans-serif"}}>Ao Vivão</p>
-            {lastSync&&<p style={{fontSize:10,color:"#F3D39888"}}>Sincronizado {lastSync.toLocaleTimeString("pt-BR")}</p>}
+          <div style={{display:"flex",flexDirection:"column",justifyContent:"center"}}>
+            <p style={{fontSize:16,fontWeight:800,letterSpacing:"-0.01em",color:"#FFB100",fontFamily:"Arial Black,sans-serif",lineHeight:1.2}}>Ao Vivão</p>
+            {lastSync&&<p style={{fontSize:10,color:"rgba(243,211,152,0.6)",marginTop:2,lineHeight:1}}>Sincronizado {lastSync.toLocaleTimeString("pt-BR")}</p>}
           </div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -314,43 +314,52 @@ export default function App(){
 
         {token&&rawRows.length>0&&(<>
 
-          <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"14px 18px",marginBottom:20}}>
-          {/* VISÃO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
-            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Visão:</p>
-            <Chip label="Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
-            <Chip label="Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
-          </div>
-          {selectedVisao==="Artista"&&(
-            <div style={{background:"rgba(10,132,255,0.1)",border:"1px solid rgba(10,132,255,0.3)",borderRadius:10,padding:"8px 14px",marginBottom:10,fontSize:12,color:"#0A84FF"}}>
-              Exibindo valores da coluna <strong>Artista (R$)</strong> da planilha
-            </div>
-          )}
-
-          {/* MODELO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
-            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Modelo:</p>
-            <Chip label="Todos" selected={selectedTipo==="all"} color={C.accent1} onClick={()=>setSelectedTipo("all")}/>
-            <Chip label="Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
-            <Chip label="Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
-          </div>
-
-          {/* ANO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
-            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Ano:</p>
-            <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
-            {anos.map(ano=>(<Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>))}
-          </div>
-
-          {/* EVENT SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Evento:</p>
-            <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
-            {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
-              <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
-                sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"+"  :"-"} ${fmtP(ev.marg)}`}
-                onClick={()=>setSelectedEv(ev.name)}/>
+          <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"16px 20px",marginBottom:20}}>
+            {[
+              {label:"Visão", chips:[
+                {l:"Evento", sel:selectedVisao==="Evento", c:"#0A84FF", fn:()=>setSelectedVisao("Evento")},
+                {l:"Artista", sel:selectedVisao==="Artista", c:"#BF5AF2", fn:()=>setSelectedVisao("Artista")},
+              ]},
+              {label:"Modelo", chips:[
+                {l:"Todos", sel:selectedTipo==="all", c:"#30D158", fn:()=>setSelectedTipo("all")},
+                {l:"Porta", sel:selectedTipo==="porta", c:"#FF9F0A", fn:()=>setSelectedTipo("porta")},
+                {l:"Cachê", sel:selectedTipo==="cache", c:"#FF453A", fn:()=>setSelectedTipo("cache")},
+              ]},
+              {label:"Ano", chips:[
+                {l:"Todos", sel:selectedAno==="all", c:"#0A84FF", fn:()=>setSelectedAno("all")},
+                ...anos.map(a=>({l:a, sel:selectedAno===a, c:"#0A84FF", fn:()=>setSelectedAno(a)})),
+              ]},
+            ].map(({label,chips})=>(
+              <div key={label} style={{display:"flex",alignItems:"center",gap:0,marginBottom:8}}>
+                <span style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0}}>{label}</span>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {chips.map(ch=>(
+                    <button key={ch.l} onClick={ch.fn} style={{height:32,padding:"0 16px",borderRadius:7,border:`1.5px solid ${ch.sel?ch.c:"#3A3A3C"}`,background:ch.sel?`${ch.c}20`:"transparent",color:ch.sel?ch.c:"#636366",fontSize:12,fontWeight:ch.sel?600:400,cursor:"pointer",transition:"all .15s",whiteSpace:"nowrap",minWidth:64,letterSpacing:"0.01em"}}>
+                      {ch.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
+            <div style={{display:"flex",alignItems:"flex-start",gap:0,borderTop:"1px solid #2C2C2E",paddingTop:8,marginTop:4}}>
+              <span style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0,paddingTop:7}}>Evento</span>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                <button onClick={()=>setSelectedEv("all")} style={{height:32,padding:"0 16px",borderRadius:7,border:`1.5px solid ${selectedEv==="all"?"#30D158":"#3A3A3C"}`,background:selectedEv==="all"?"#30D15820":"transparent",color:selectedEv==="all"?"#30D158":"#636366",fontSize:12,fontWeight:selectedEv==="all"?600:400,cursor:"pointer",transition:"all .15s",whiteSpace:"nowrap",minWidth:64}}>
+                  Todos
+                </button>
+                {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
+                  <button key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{padding:"5px 14px",borderRadius:7,border:`1.5px solid ${selectedEv===ev.name?ev.color:"#3A3A3C"}`,background:selectedEv===ev.name?`${ev.color}20`:"transparent",color:selectedEv===ev.name?ev.color:"#636366",fontSize:12,fontWeight:selectedEv===ev.name?600:400,cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center"}}>
+                    <span style={{whiteSpace:"nowrap",lineHeight:1.3}}>{ev.name}</span>
+                    <span style={{fontSize:10,opacity:.65,lineHeight:1.3}}>{ev.date} · {ev.res>=0?"+":"-"}{fmtP(Math.abs(ev.marg))}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {selectedVisao==="Artista"&&(
+              <div style={{marginTop:10,padding:"8px 12px",background:"rgba(10,132,255,0.08)",border:"1px solid rgba(10,132,255,0.2)",borderRadius:8,fontSize:12,color:"#0A84FF"}}>
+                Exibindo valores da coluna Artista (R$) da planilha
+              </div>
+            )}
           </div>
 
           </div>
@@ -421,23 +430,20 @@ export default function App(){
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
                 <Card title="Composição de Receitas" sub={selName}>
-                  {pieRec.length===0?<div style={{height:200,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted}}>Sem receitas</div>:
+                  {pieRec.length===0?<div style={{height:200,display:"flex",alignItems:"center",justifyContent:"center",color:"#636366"}}>Sem receitas</div>:
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart><Pie data={pieRec} dataKey="val" cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={3}>
                       {pieRec.map((_,i)=><Cell key={i} fill={ECOLS[i%ECOLS.length]}/>)}
-                    </Pie><Tooltip content={<Tip totalRec={stats.rec}/>}/><Legend wrapperStyle={{fontSize:11,color:C.textDim}}/></PieChart>
+                    </Pie><Tooltip content={<Tip totalRec={stats.rec}/>}/><Legend wrapperStyle={{fontSize:11,color:"#8E8E93"}}/></PieChart>
                   </ResponsiveContainer>}
                 </Card>
-                <Card title="ROI por Evento" sub="retorno sobre despesa (%)">
+                <Card title="Composição de Despesas" sub={selName}>
+                  {pieDesp.length===0?<div style={{height:200,display:"flex",alignItems:"center",justifyContent:"center",color:"#636366"}}>Sem despesas</div>:
                   <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={roiData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`${v.toFixed(0)}%`}/>
-                      <Tooltip content={<Tip/>}/>
-                      <Bar dataKey="ROI" radius={[5,5,0,0]}>{roiData.map((d,i)=><Cell key={i} fill={d.ROI>=0?C.accent3:C.accent2}/>)}</Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
+                    <PieChart><Pie data={pieDesp} dataKey="val" cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={3}>
+                      {pieDesp.map((_,i)=><Cell key={i} fill={["#FF453A","#FF6B6B","#FF9F9F","#FF8C00","#FFB340","#FFD60A"][i%6]}/>)}
+                    </Pie><Tooltip content={<Tip/>}/><Legend wrapperStyle={{fontSize:11,color:"#8E8E93"}}/></PieChart>
+                  </ResponsiveContainer>}
                 </Card>
               </div>
             </div>
