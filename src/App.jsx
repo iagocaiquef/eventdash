@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
- CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -70,12 +70,12 @@ function exportPDF(selName, stats, filtered, selectedVisao, fmt, fmtP, fmtN) {
 }
 
 const C = {
-  bg:"#1A0508",surface:"#230A0D",card:"#2D0E12",border:"#4A1820",
-  accent1:"#FFB100",accent2:"#FF4444",accent3:"#F3D398",accent4:"#FFB100",accent5:"#F3D398",accent6:"#FFD966",
+  bg:"#000000",surface:"#1C1C1E",card:"#2C2C2E",border:"#3A3A3C",
+  accent1:"#30D158",accent2:"#FF453A",accent3:"#636366",accent4:"#FFD60A",accent5:"#0A84FF",accent6:"#BF5AF2",
   brand:"#560E11",gold:"#FFB100",cream:"#F3D398",
-  muted:"#8B4A50",text:"#F3D398",textDim:"#C4837A",
+  muted:"#8E8E93",text:"#F2F2F7",textDim:"#8E8E93",
 };
-const ECOLS=["#FFB100","#F3D398","#FF6B35","#FFD966","#E8956D","#FFC947","#FF8C42","#FFDA79"];
+const ECOLS=["#0A84FF","#30D158","#FFD60A","#FF9F0A","#BF5AF2","#FF375F","#5AC8FA","#64D2FF"];
 
 const fmt  = v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}).format(v||0);
 const fmtN = v=>new Intl.NumberFormat("pt-BR").format(v||0);
@@ -97,7 +97,7 @@ function calcStats(entries,publicoMap){
 const Tip=({active,payload,label,totalRec})=>{
   if(!active||!payload?.length)return null;
   return(
-    <div style={{background:"#2D0E12",border:"1px solid #FFB100",borderRadius:10,padding:"10px 14px"}}>
+    <div style={{background:"#2C2C2E",border:"1px solid #3A3A3C",borderRadius:10,padding:"10px 14px"}}>
       <p style={{color:C.textDim,fontSize:11,marginBottom:4}}>{label}</p>
       {payload.map((p,i)=>{
         const isRec=p.dataKey==="Receita"||p.dataKey==="val";
@@ -113,26 +113,26 @@ const Tip=({active,payload,label,totalRec})=>{
 };
 
 const KPI=({label,value,sub,color,icon,small})=>(
-  <div style={{background:"linear-gradient(135deg, #2D0E12 0%, #230A0D 100%)",border:`1px solid #4A1820`,borderRadius:14,padding:"16px 20px",borderTop:`3px solid ${color}`,boxShadow:`0 4px 20px rgba(86,14,17,0.4)`,position:"relative",overflow:"hidden"}}>
+  <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"16px 20px",borderTop:`3px solid ${color}`,boxShadow:"0 2px 12px rgba(0,0,0,0.3)",position:"relative",overflow:"hidden"}}>
     <div style={{position:"absolute",top:12,right:16,fontSize:22,opacity:.12}}>{icon}</div>
-    <p style={{color:C.textDim,fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:6}}>{label}</p>
+    <p style={{color:"#8E8E93",fontSize:10,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:6}}>{label}</p>
     <p style={{color,fontSize:small?18:22,fontWeight:800,letterSpacing:"-0.02em",lineHeight:1}}>{value}</p>
-    {sub&&<p style={{color:C.muted,fontSize:11,marginTop:4}}>{sub}</p>}
+    {sub&&<p style={{color:"#8E8E93",fontSize:11,marginTop:4}}>{sub}</p>}
   </div>
 );
 
 const Card=({title,sub,children,style={}})=>(
-  <div style={{background:"linear-gradient(135deg, #2D0E12 0%, #230A0D 100%)",border:`1px solid #4A1820`,borderRadius:16,padding:"20px 22px",...style}}>
-    <p style={{fontSize:14,fontWeight:700,marginBottom:2,color:"#F3D398"}}>{title}</p>
-    {sub&&<p style={{fontSize:11,color:"#C4837A",marginBottom:14}}>{sub}</p>}
+  <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:16,padding:"20px 22px",...style}}>
+    <p style={{fontSize:14,fontWeight:600,marginBottom:2,color:"#F2F2F7"}}>{title}</p>
+    {sub&&<p style={{fontSize:11,color:"#8E8E93",marginBottom:14}}>{sub}</p>}
     {children}
   </div>
 );
 
 const Chip=({label,selected,color,sub,onClick})=>(
-  <button onClick={onClick} style={{background:selected?color:"rgba(86,14,17,0.6)",color:selected?"#560E11":"#F3D398",border:`1px solid ${selected?color:"#4A1820"}`,borderRadius:22,padding:sub?"6px 14px":"7px 14px",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .2s",display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
+  <button onClick={onClick} style={{background:selected?`${color}22`:"#2C2C2E",color:selected?color:"#8E8E93",border:`1.5px solid ${selected?color:"#3A3A3C"}`,borderRadius:20,padding:sub?"5px 14px":"7px 14px",fontSize:12,fontWeight:500,cursor:"pointer",transition:"all .2s",display:"flex",flexDirection:"column",alignItems:"center",gap:1,whiteSpace:"nowrap"}}>
     <span>{label}</span>
-    {sub&&<span style={{fontSize:10,opacity:.8,fontWeight:500}}>{sub}</span>}
+    {sub&&<span style={{fontSize:10,opacity:.75,fontWeight:400}}>{sub}</span>}
   </button>
 );
 
@@ -265,7 +265,7 @@ export default function App(){
   const selName=selectedEv==="all"?"Todos os Eventos":selectedEv;
 
   return(
-    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'DM Sans','Segoe UI',sans-serif",color:C.text,paddingBottom:60,backgroundImage:"radial-gradient(ellipse at top, #2D0E12 0%, #1A0508 60%)"}}>
+    <div style={{background:"#000000",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",color:"#F2F2F7",paddingBottom:60}}>
 
       {/* TOP BAR */}
       <div style={{background:"#560E11",borderBottom:`3px solid #FFB100`,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
@@ -305,7 +305,7 @@ export default function App(){
           <div style={{textAlign:"center",padding:"60px 20px"}}>
             <div style={{fontSize:48,marginBottom:12}}>📊</div>
             <p style={{fontSize:18,fontWeight:700,marginBottom:8}}>Planilha vazia ou sem dados</p>
-            <p style={{color:"#C4837A",fontSize:13,lineHeight:1.7}}>
+            <p style={{color:"#8E8E93",fontSize:13,lineHeight:1.7}}>
               Certifique-se que sua planilha tem as colunas:<br/>
               <code style={{color:C.accent4,background:`${C.accent4}11`,padding:"2px 8px",borderRadius:4}}>Evento | Descrição | Categoria | Data | Valor | Público</code>
             </p>
@@ -315,36 +315,37 @@ export default function App(){
 
         {token&&rawRows.length>0&&(<>
 
+          <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:16,padding:"16px 20px",marginBottom:20}}>
           {/* VISÃO SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#C4837A",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Visão:</p>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Visão:</p>
             <Chip label="🎪 Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
             <Chip label="🎤 Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
           </div>
           {selectedVisao==="Artista"&&(
-            <div style={{background:"rgba(255,177,0,0.1)",border:"1px solid #FFB10055",borderRadius:10,padding:"8px 14px",marginBottom:10,fontSize:12,color:"#FFB100"}}>
+            <div style={{background:"rgba(10,132,255,0.1)",border:"1px solid rgba(10,132,255,0.3)",borderRadius:10,padding:"8px 14px",marginBottom:10,fontSize:12,color:"#0A84FF"}}>
               🎤 Exibindo valores da coluna <strong>Artista (R$)</strong> da planilha
             </div>
           )}
 
           {/* MODELO SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#C4837A",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Modelo:</p>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Modelo:</p>
             <Chip label="Todos" selected={selectedTipo==="all"} color={C.accent1} onClick={()=>setSelectedTipo("all")}/>
             <Chip label="🎟️ Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
             <Chip label="🎤 Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
           </div>
 
           {/* ANO SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#C4837A",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
             <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
             {anos.map(ano=>(<Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>))}
           </div>
 
           {/* EVENT SELECTOR */}
-          <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#C4837A",fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Evento:</p>
+          <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Evento:</p>
             <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
             {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
               <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
@@ -355,8 +356,8 @@ export default function App(){
 
           {/* TITLE */}
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
-            <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?"#FFB100":eventStats.find(e=>e.name===selectedEv)?.color||"#FFB100"}}/>
-            <h2 style={{fontSize:20,fontWeight:800,letterSpacing:"-0.02em",color:"#F3D398"}}>{selName}</h2>
+            <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?"#0A84FF":eventStats.find(e=>e.name===selectedEv)?.color||"#0A84FF"}}/>
+            <h2 style={{fontSize:20,fontWeight:700,letterSpacing:"-0.02em",color:"#F2F2F7"}}>{selName}</h2>
             <span style={{background:selectedVisao==="Artista"?"#2e1040":"#0a1e2e",color:selectedVisao==="Artista"?C.accent6:C.accent5,fontSize:11,fontWeight:700,borderRadius:20,padding:"3px 12px"}}>
               {selectedVisao==="Artista"?"🎤 Artista":"🎪 Evento"}
             </span>
@@ -384,9 +385,9 @@ export default function App(){
           </div>
 
           {/* TABS */}
-          <div style={{display:"flex",gap:4,marginBottom:18,background:C.surface,borderRadius:12,padding:4,width:"fit-content",border:`1px solid ${C.border}`}}>
+          <div style={{display:"flex",gap:4,marginBottom:18,background:"#1C1C1E",borderRadius:12,padding:4,width:"fit-content",border:"1px solid #3A3A3C"}}>
             {[["overview","📊 Visão Geral"],["publico","👥 Público"],["custos","💸 Custos"],["entries","📋 Lançamentos"],["compare","🔀 Comparar"]].map(([t,l])=>(
-              <button key={t} onClick={()=>setTab(t)} style={{background:tab===t?"#FFB100":"transparent",color:tab===t?"#560E11":C.textDim,border:"none",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .2s"}}>{l}</button>
+              <button key={t} onClick={()=>setTab(t)} style={{background:tab===t?"#3A3A3C":"transparent",color:tab===t?"#F2F2F7":"#8E8E93",border:"none",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .2s"}}>{l}</button>
             ))}
           </div>
 
@@ -397,9 +398,9 @@ export default function App(){
                 <Card title="Receita vs Despesa" sub="por evento">
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={barData} barGap={4}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
                       <Tooltip content={<Tip totalRec={stats.rec}/>}/><Legend wrapperStyle={{fontSize:12,color:C.textDim}}/>
                       <Bar dataKey="Receita" fill={C.accent1} radius={[5,5,0,0]}/>
                       <Bar dataKey="Despesa" fill={C.accent2} radius={[5,5,0,0]}/>
@@ -409,9 +410,9 @@ export default function App(){
                 <Card title="Resultado Líquido" sub="por evento">
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={barData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
                       <Tooltip content={<Tip/>}/>
                       <Bar dataKey="Resultado" radius={[5,5,0,0]}>{barData.map((d,i)=><Cell key={i} fill={d.Resultado>=0?C.accent1:C.accent2}/>)}</Bar>
                     </BarChart>
@@ -430,9 +431,9 @@ export default function App(){
                 <Card title="ROI por Evento" sub="retorno sobre despesa (%)">
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={roiData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`${v.toFixed(0)}%`}/>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`${v.toFixed(0)}%`}/>
                       <Tooltip content={<Tip/>}/>
                       <Bar dataKey="ROI" radius={[5,5,0,0]}>{roiData.map((d,i)=><Cell key={i} fill={d.ROI>=0?C.accent3:C.accent2}/>)}</Bar>
                     </BarChart>
@@ -449,9 +450,9 @@ export default function App(){
                 <Card title="Público por Evento" sub="total de pessoas">
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={pubData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>fmtK(v)}/>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>fmtK(v)}/>
                       <Tooltip content={<Tip/>}/>
                       <Bar dataKey="Público" radius={[5,5,0,0]}>{pubData.map((_,i)=><Cell key={i} fill={ECOLS[i%ECOLS.length]}/>)}</Bar>
                     </BarChart>
@@ -460,9 +461,9 @@ export default function App(){
                 <Card title="Ticket Médio por Evento" sub="receita por pessoa (R$)">
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={pubData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                      <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                      <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(1)}k`}/>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                      <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                      <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(1)}k`}/>
                       <Tooltip content={<Tip/>}/>
                       <Bar dataKey="Ticket Médio" fill={C.accent3} radius={[5,5,0,0]}/>
                     </BarChart>
@@ -477,7 +478,7 @@ export default function App(){
                       <div key={ev.name} style={{display:"flex",alignItems:"center",gap:12}}>
                         <span style={{color:C.muted,fontSize:12,width:24,textAlign:"right"}}>#{i+1}</span>
                         <p style={{width:170,fontSize:13,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ev.name}</p>
-                        <div style={{flex:1,background:"#4A1820",borderRadius:4,height:8,overflow:"hidden"}}>
+                        <div style={{flex:1,background:"#3A3A3C",borderRadius:4,height:8,overflow:"hidden"}}>
                           <div style={{width:`${(ev.pub/maxPub)*100}%`,height:"100%",background:ev.color,borderRadius:4,transition:"width .6s"}}/>
                         </div>
                         <p style={{color:ev.color,fontWeight:700,fontSize:13,width:80,textAlign:"right"}}>{fmtN(ev.pub)}</p>
@@ -511,7 +512,7 @@ export default function App(){
                         return(
                           <div key={d.name} style={{display:"flex",alignItems:"center",gap:10}}>
                             <p style={{width:140,fontSize:12,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{d.name}</p>
-                            <div style={{flex:1,background:"#4A1820",borderRadius:4,height:6,overflow:"hidden"}}>
+                            <div style={{flex:1,background:"#3A3A3C",borderRadius:4,height:6,overflow:"hidden"}}>
                               <div style={{width:`${(d.val/maxVal)*100}%`,height:"100%",background:C.accent2,borderRadius:4}}/>
                             </div>
                             <p style={{color:C.accent2,fontWeight:700,fontSize:12,width:90,textAlign:"right"}}>{fmt(d.val)}</p>
@@ -525,9 +526,9 @@ export default function App(){
               <Card title="Custo por Pessoa por Evento" sub="despesa total ÷ público">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={eventStats.map(ev=>({name:ev.name.length>14?ev.name.slice(0,12)+"…":ev.name,"Custo/Pessoa":Math.round(ev.cppub)}))}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                    <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                    <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${v}`}/>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                    <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                    <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${v}`}/>
                     <Tooltip content={<Tip/>}/>
                     <Bar dataKey="Custo/Pessoa" fill={C.accent2} radius={[5,5,0,0]}/>
                   </BarChart>
@@ -538,10 +539,10 @@ export default function App(){
 
           {/* TAB LANÇAMENTOS */}
           {tab==="entries"&&(
-            <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:16,overflow:"hidden"}}>
-              <div style={{display:"grid",gridTemplateColumns:"2fr 2.5fr 1fr 1fr 1fr 1fr",background:"#2D0E12",padding:"12px 20px",gap:12,borderBottom:"2px solid #4A1820"}}>
+            <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:16,overflow:"hidden"}}>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 2.5fr 1fr 1fr 1fr 1fr",background:"#2C2C2E",padding:"12px 20px",gap:12,borderBottom:"1px solid #3A3A3C"}}>
                 {["Evento","Descrição","Categoria","Data","Valor","Público"].map((h,i)=>(
-                  <p key={i} style={{color:"#C4837A",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>{h}</p>
+                  <p key={i} style={{color:"#8E8E93",fontSize:10,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.08em"}}>{h}</p>
                 ))}
               </div>
               {filtered.map((row,i)=>{
@@ -560,7 +561,7 @@ export default function App(){
                   </div>
                 );
               })}
-              <div style={{display:"grid",gridTemplateColumns:"2fr 2.5fr 1fr 1fr 1fr 1fr",padding:"14px 20px",gap:12,borderTop:"2px solid #FFB100",background:"#2D0E12",alignItems:"center"}}>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 2.5fr 1fr 1fr 1fr 1fr",padding:"14px 20px",gap:12,borderTop:"1px solid #3A3A3C",background:"#2C2C2E",alignItems:"center"}}>
                 <p style={{fontSize:11,fontWeight:700,color:C.textDim,gridColumn:"1/4"}}>TOTAL — {filtered.length} lançamentos</p>
                 <div/>
                 <p style={{fontSize:13,fontWeight:800,color:stats.res>=0?C.accent1:C.accent2}}>{fmt(stats.res)}</p>
@@ -574,7 +575,7 @@ export default function App(){
             <div style={{display:"flex",flexDirection:"column",gap:18}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
                 {[...eventStatsVisao].sort((a,b)=>b.res-a.res).map((ev,i)=>(
-                  <div key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{background:"linear-gradient(135deg, #2D0E12 0%, #230A0D 100%)",border:`1px solid ${selectedEv===ev.name?ev.color:"#4A1820"}`,borderLeft:`4px solid ${ev.color}`,borderRadius:14,padding:"18px 20px",cursor:"pointer",transition:"border-color .2s"}}>
+                  <div key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{background:"#1C1C1E",border:`1px solid ${selectedEv===ev.name?ev.color:"#3A3A3C"}`,borderLeft:`4px solid ${ev.color}`,borderRadius:14,padding:"18px 20px",cursor:"pointer",transition:"border-color .2s"}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
                       <div>
                         <span style={{background:C.bg,color:C.muted,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 8px"}}>#{i+1}</span>
@@ -590,7 +591,7 @@ export default function App(){
                         </div>
                       ))}
                     </div>
-                    <div style={{background:"#4A1820",borderRadius:4,height:4,overflow:"hidden"}}>
+                    <div style={{background:"#3A3A3C",borderRadius:4,height:4,overflow:"hidden"}}>
                       <div style={{width:`${Math.max(0,Math.min(100,ev.marg*100))}%`,height:"100%",background:ev.color,borderRadius:4,transition:"width .6s"}}/>
                     </div>
                   </div>
@@ -599,9 +600,9 @@ export default function App(){
               <Card title="Comparativo Completo" sub="todos os eventos lado a lado">
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={barData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#4A1820" vertical={false}/>
-                    <XAxis dataKey="name" tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false}/>
-                    <YAxis tick={{fill:"#C4837A",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3C" vertical={false}/>
+                    <XAxis dataKey="name" tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false}/>
+                    <YAxis tick={{fill:"#8E8E93",fontSize:11}} axisLine={false} tickLine={false} tickFormatter={v=>`R$${(v/1000).toFixed(0)}k`}/>
                     <Tooltip content={<Tip/>}/><Legend wrapperStyle={{fontSize:12,color:C.textDim}}/>
                     <Bar dataKey="Receita"   fill={C.accent1} radius={[4,4,0,0]}/>
                     <Bar dataKey="Despesa"   fill={C.accent2} radius={[4,4,0,0]}/>
