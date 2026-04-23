@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
-  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -239,7 +239,7 @@ export default function App(){
       const stats=calcStats(rows,publicoMap);
       const dates=rows.map(r=>r.date).filter(Boolean);
       const date=dates[0]||"";
-      const year=date.split("/")[2]||date.split("-")[0]||"";
+      const year=date?.includes("/")?date.split("/")[2]:date?.includes("-")?date.split("-")[0]:"";
       const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
       const temCache=rows.some(r=>norm(r.desc).includes("cache"));
       const temPorta=rows.some(r=>norm(r.desc).includes("venda de ingresso"));
@@ -252,7 +252,7 @@ export default function App(){
   const eventStatsVisao=useMemo(()=>
     events.map((ev,i)=>{
       const rows=selectedVisao==="Artista"
-        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista,cat:r.artista>0?r.cat:r.cat}))
+        ? rawRows.filter(r=>r.evento===ev&&r.artista>0).map(r=>({...r,val:r.artista}))
         : rawRows.filter(r=>r.evento===ev);
       const s=calcStats(rows,publicoMap);
       const base=eventStats.find(e=>e.name===ev)||{};
@@ -262,12 +262,12 @@ export default function App(){
 
   const filtered=useMemo(()=>{
     let rows=rawRows;
-    if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";return y===selectedAno;});
+    if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.includes("/")?r.date.split("/")[2]:r.date?.includes("-")?r.date.split("-")[0]:"";return y===selectedAno;});
     const evOk=new Set(eventStatsVisao.filter(e=>selectedTipo==="all"||e.tipo===selectedTipo).map(e=>e.name));
     rows=rows.filter(r=>evOk.has(r.evento));
     if(selectedEv!=="all") rows=rows.filter(r=>r.evento===selectedEv);
     // Se visão = Artista, usa coluna artista no lugar de val
-    if(selectedVisao==="Artista") rows=rows.filter(r=>r.artista>0).map(r=>({...r,val:r.artista}));
+    if(selectedVisao==="Artista") rows=rows.map(r=>({...r,val:r.artista||0})).filter(r=>r.val>0);
     return rows;
   },[rawRows,selectedEv,selectedAno,selectedTipo,selectedVisao,eventStats]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
