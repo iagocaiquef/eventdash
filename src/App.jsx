@@ -183,9 +183,6 @@ const filtered=useMemo(()=>{
   });
   return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
 },[rawRows,selectedEv,selectedAno,selectedTipo,eventStats]);
-  });
-  return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
-},[rawRows,selectedEv,selectedAno]);
   const stats=useMemo(()=>calcStats(filtered,publicoMap),[filtered,publicoMap]);
 
   const pieRec =useMemo(()=>filtered.filter(e=>e.cat==="Receita").reduce((a,e)=>{const x=a.find(i=>i.name===e.desc);x?x.val+=e.val:a.push({name:e.desc,val:e.val});return a;},[]),[filtered]);
