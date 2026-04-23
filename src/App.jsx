@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
-CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+ CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -239,7 +239,13 @@ export default function App(){
       const stats=calcStats(rows,publicoMap);
       const dates=rows.map(r=>r.date).filter(Boolean);
       const date=dates[0]||"";
-      const year=date?.includes("/")?date.split("/")[2]:date?.includes("-")?date.split("-")[0]:"";
+      // Extract year from each row and use the most common year
+      const years=rows.map(r=>{
+        const d=r.date||"";
+        return d.includes("/")?d.split("/")[2]:d.includes("-")?d.split("-")[0]:"";
+      }).filter(Boolean);
+      const yearCounts=years.reduce((a,y)=>{a[y]=(a[y]||0)+1;return a;},{});
+      const year=Object.entries(yearCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||"";
       const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
       const temCache=rows.some(r=>norm(r.desc).includes("cache"));
       const temPorta=rows.some(r=>norm(r.desc).includes("venda de ingresso"));
