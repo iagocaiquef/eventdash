@@ -168,7 +168,7 @@ export default function App(){
   const filtered=useMemo(()=>{
     let rows=rawRows;
     if(selectedAno!=="all") rows=rows.filter(r=>{const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";return y===selectedAno;});
-    const evOk=new Set(eventStats.filter(e=>selectedTipo==="all"||e.tipo===selectedTipo).map(e=>e.name));
+    const evOk=new Set(eventStatsVisao.filter(e=>selectedTipo==="all"||e.tipo===selectedTipo).map(e=>e.name));
     rows=rows.filter(r=>evOk.has(r.evento));
     if(selectedEv!=="all") rows=rows.filter(r=>r.evento===selectedEv);
     // Se visão = Artista, usa coluna artista no lugar de val
@@ -185,7 +185,7 @@ export default function App(){
         : rawRows.filter(r=>r.evento===ev);
       const s=calcStats(rows,publicoMap);
       const base=eventStats.find(e=>e.name===ev)||{};
-      return{...base,...s};
+      return{...base,...s,tipo:base.tipo||"porta"};
     }),
   [events,rawRows,publicoMap,selectedVisao,eventStats]);
 
