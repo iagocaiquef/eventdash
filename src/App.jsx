@@ -157,18 +157,32 @@ export default function App(){
       const rows=rawRows.filter(r=>r.evento===ev);
       const stats=calcStats(rows,publicoMap);
       const dates=rows.map(r=>r.date).filter(Boolean);
-      const date=dates[0]||"";
+    const date=dates[0]||"";
       const year=date.split("/")[2]||date.split("-")[0]||"";
-      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length,date,year};
+      const temCache=rows.some(r=>r.desc?.toLowerCase().includes("cach"));
+      const temPorta=rows.some(r=>r.desc?.toLowerCase().includes("venda de ingresso"));
+      const tipo=temPorta?"porta":temCache?"cache":"porta";
+      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length,date,year,tipo};
     }),
   [events,rawRows,publicoMap]);
 
-  const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
+const anos=useMemo(()=>[...new Set(eventStats.map(e=>e.year).filter(Boolean))].sort(),[eventStats]);
 const[selectedAno,setSelectedAno]=useState("all");
+const[selectedTipo,setSelectedTipo]=useState("all");
 const filtered=useMemo(()=>{
-  let rows=selectedAno==="all"?rawRows:rawRows.filter(r=>{
+  const evsFiltrados=new Set(
+    eventStats
+      .filter(e=>selectedTipo==="all"||e.tipo===selectedTipo)
+      .filter(e=>selectedAno==="all"||e.year===selectedAno)
+      .map(e=>e.name)
+  );
+  let rows=rawRows.filter(r=>evsFiltrados.has(r.evento));
+  if(selectedAno!=="all") rows=rows.filter(r=>{
     const y=r.date?.split("/")[2]||r.date?.split("-")[0]||"";
     return y===selectedAno;
+  });
+  return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
+},[rawRows,selectedEv,selectedAno,selectedTipo,eventStats]);
   });
   return selectedEv==="all"?rows:rows.filter(r=>r.evento===selectedEv);
 },[rawRows,selectedEv,selectedAno]);
@@ -231,7 +245,14 @@ const filtered=useMemo(()=>{
         )}
 
         {token&&rawRows.length>0&&(<>
-         {/* ANO SELECTOR */}
+        {/* TIPO SELECTOR */}
+          <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+            <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Modelo:</p>
+            <Chip label="Todos" selected={selectedTipo==="all"} color={C.accent1} onClick={()=>setSelectedTipo("all")}/>
+            <Chip label="🎟️ Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
+            <Chip label="🎤 Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
+          </div>
+          {/* ANO SELECTOR */}
           <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
             <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
             <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
@@ -243,7 +264,7 @@ const filtered=useMemo(()=>{
           <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap",alignItems:"center"}}>
             <p style={{color:C.textDim,fontSize:11,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:4}}>Filtrar:</p>
             <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
-            {eventStats.filter(ev=>selectedAno==="all"||ev.year===selectedAno).map(ev=>(
+         {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
                 <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
                   sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"✅":"⚠️"} ${fmtP(ev.marg)}`}
                   onClick={()=>setSelectedEv(ev.name)}/>
@@ -474,6 +495,7 @@ const filtered=useMemo(()=>{
                         <span style={{background:C.bg,color:C.muted,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 8px"}}>#{i+1}</span>
                         <p style={{fontSize:14,fontWeight:700,marginTop:5,lineHeight:1.3}}>{ev.name}</p>
                         {ev.date&&<p style={{fontSize:11,color:C.textDim,marginTop:2}}>📅 {ev.date}</p>}
+                        <span style={{background:ev.tipo==="cache"?`${C.accent4}22`:`${C.accent3}22`,color:ev.tipo==="cache"?C.accent4:C.accent3,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 10px",marginTop:4,display:"inline-block"}}>{ev.tipo==="cache"?"🎤 Cachê":"🎟️ Porta"}</span>
                       </div>
                       <span style={{fontSize:18}}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":"📊"}</span>
                     </div>
