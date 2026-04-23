@@ -6,12 +6,68 @@ import {
 } from "recharts";
 
 const CONFIG = {
- CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
 
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
+
+// Cole aqui a URL da sua logo (pode ser um link do Google Drive, Imgur, etc.)
+const LOGO_URL = ""; // ex: "https://i.imgur.com/suaLogo.png"
+
+function exportPDF(selName, stats, filtered, selectedVisao, fmt, fmtP, fmtN) {
+  const style = `
+    body { font-family: Arial, sans-serif; color: #1a1a2e; padding: 32px; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .sub { color: #666; font-size: 13px; margin-bottom: 28px; }
+    .badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-left: 8px; }
+    .ev { background: #e0f0ff; color: #185fa5; }
+    .art { background: #fce4f4; color: #a0297e; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .card { border: 1px solid #dde; border-radius: 12px; padding: 16px 20px; }
+    .card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #888; margin-bottom: 6px; }
+    .card-val { font-size: 22px; font-weight: 800; }
+    .green { color: #0e7a4a; } .red { color: #c0192e; } .blue { color: #185fa5; } .amber { color: #b07010; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #f0f4ff; text-align: left; padding: 8px 12px; border-bottom: 2px solid #dde; }
+    td { padding: 8px 12px; border-bottom: 1px solid #eee; }
+    tr:nth-child(even) td { background: #fafbff; }
+    .footer { margin-top: 32px; font-size: 11px; color: #aaa; text-align: center; }
+  `;
+  const visaoBadge = selectedVisao === "Artista"
+    ? '<span class="badge art">🎤 Artista</span>'
+    : '<span class="badge ev">🎪 Evento</span>';
+  const recRows = filtered.filter(e => e.cat === "Receita");
+  const despRows = filtered.filter(e => e.cat === "Despesa");
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Relatório — ${selName}</title><style>${style}</style></head><body>
+    <h1>${selName} ${visaoBadge}</h1>
+    <p class="sub">Gerado em ${new Date().toLocaleString("pt-BR")} · Ao Vivão</p>
+    <div class="grid">
+      <div class="card"><div class="card-label">Receita Total</div><div class="card-val green">${fmt(stats.rec)}</div></div>
+      <div class="card"><div class="card-label">Despesa Total</div><div class="card-val red">${fmt(stats.desp)}</div></div>
+      <div class="card"><div class="card-label">Resultado</div><div class="card-val ${stats.res >= 0 ? "green" : "red"}">${fmt(stats.res)}</div></div>
+      <div class="card"><div class="card-label">Margem</div><div class="card-val amber">${fmtP(stats.marg)}</div></div>
+      <div class="card"><div class="card-label">Público Total</div><div class="card-val blue">${fmtN(stats.pub)}</div></div>
+      <div class="card"><div class="card-label">Ticket Médio</div><div class="card-val blue">${fmt(stats.ticket)}</div></div>
+      <div class="card"><div class="card-label">Custo por Pessoa</div><div class="card-val red">${fmt(stats.cppub)}</div></div>
+      <div class="card"><div class="card-label">ROI</div><div class="card-val ${stats.res >= 0 ? "green" : "red"}">${stats.desp > 0 ? ((stats.res/stats.desp)*100).toFixed(0)+"%" : "—"}</div></div>
+    </div>
+    <h2 style="font-size:16px;margin-bottom:12px">📋 Lançamentos (${filtered.length})</h2>
+    <table>
+      <thead><tr><th>Descrição</th><th>Categoria</th><th>Data</th><th style="text-align:right">Valor</th></tr></thead>
+      <tbody>
+        ${filtered.map(r => `<tr><td>${r.desc}</td><td>${r.cat}</td><td>${r.date}</td><td style="text-align:right;font-weight:700;color:${r.cat==="Receita"?"#0e7a4a":"#c0192e"}">${fmt(r.val)}</td></tr>`).join("")}
+        <tr style="font-weight:800"><td colspan="3">RESULTADO</td><td style="text-align:right;color:${stats.res>=0?"#0e7a4a":"#c0192e"}">${fmt(stats.res)}</td></tr>
+      </tbody>
+    </table>
+    <p class="footer">Ao Vivão · Dashboard de Performance · ${new Date().getFullYear()}</p>
+  </body></html>`;
+  const win = window.open("", "_blank");
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 800);
+}
 
 const C = {
   bg:"#080B14",surface:"#0F1220",card:"#161A2E",border:"#1E2340",
@@ -139,8 +195,8 @@ export default function App(){
           cat:   r[2]?.trim()||"",
           date:  r[3]?.trim()||"",
           val:   parseFloat((r[4]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
-          publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",","."))||0),
-          artista:parseFloat((r[7]||"0").toString().replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0,
+          publico:Math.round(parseFloat((r[5]||"0").toString().replace(/[R$\s]/g,"").replace(/\.(\d{3})/g,"$1").replace(",","."))||0),
+          artista:parseFloat((r[6]||"0").toString().replace(/[R$\s]/g,"").replace(/\.(\d{3})/g,"$1").replace(",","."))||0,
         }));
       setRawRows(rows);
       setLastSync(new Date());
@@ -160,7 +216,14 @@ export default function App(){
     events.map((ev,i)=>{
       const rows=rawRows.filter(r=>r.evento===ev);
       const stats=calcStats(rows,publicoMap);
-      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length};
+      const dates=rows.map(r=>r.date).filter(Boolean);
+      const date=dates[0]||"";
+      const year=date.split("/")[2]||date.split("-")[0]||"";
+      const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      const temCache=rows.some(r=>norm(r.desc).includes("cache"));
+      const temPorta=rows.some(r=>norm(r.desc).includes("venda de ingresso"));
+      const tipo=temPorta?"porta":temCache?"cache":"porta";
+      return{...stats,name:ev,color:ECOLS[i%ECOLS.length],count:rows.length,date,year,tipo};
     }),
   [events,rawRows,publicoMap]);
 
@@ -206,13 +269,17 @@ export default function App(){
       {/* TOP BAR */}
       <div style={{background:C.surface,borderBottom:`1px solid ${C.border}`,padding:"16px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${C.accent1},${C.accent3})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📻</div>
+          {LOGO_URL
+            ? <img src={LOGO_URL} alt="Logo" style={{width:36,height:36,borderRadius:10,objectFit:"cover"}}/>
+            : <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${C.accent1},${C.accent3})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📻</div>
+          }
           <div>
             <p style={{fontSize:15,fontWeight:800,letterSpacing:"-0.02em"}}>Ao Vivão</p>
             {lastSync&&<p style={{fontSize:10,color:C.muted}}>Sincronizado {lastSync.toLocaleTimeString("pt-BR")}</p>}
           </div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          {token&&<button onClick={()=>exportPDF(selName,stats,filtered,selectedVisao,fmt,fmtP,fmtN)} style={{background:C.card,border:`1px solid ${C.border}`,color:C.textDim,borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>📄 Exportar PDF</button>}
           {token&&<button onClick={fetchData} disabled={loading} style={{background:C.card,border:`1px solid ${C.border}`,color:C.textDim,borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>{loading?"⏳ Carregando…":"🔄 Sincronizar"}</button>}
           {!token
             ?<button onClick={configured?login:()=>{}} style={{background:C.accent1,border:"none",color:C.bg,borderRadius:10,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}>🔑 Entrar com Google</button>
