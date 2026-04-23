@@ -354,6 +354,7 @@ export default function App(){
             ))}
           </div>
 
+          </div>
           {/* TITLE */}
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
             <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?"#0A84FF":eventStats.find(e=>e.name===selectedEv)?.color||"#0A84FF"}}/>
