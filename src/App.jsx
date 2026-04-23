@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 const CONFIG = {
- CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
+  CLIENT_ID: "539168919743-55kg9fqnr9jhs8b86etq0fp4o4vmuria.apps.googleusercontent.com",
 SHEET_ID:  "1wkh5Vh1sgkIpOnXBGU2U3zsj-bfYIuW_OSYDhBAV23U",
   SHEET_TAB: "Lançamentos",
 };
@@ -134,6 +134,27 @@ const Chip=({label,selected,color,sub,onClick})=>(
     {sub&&<span style={{fontSize:10,opacity:.7,fontWeight:400,lineHeight:1.2}}>{sub}</span>}
   </button>
 );
+
+const FL = {row:"flex",alignItems:"center",gap:0,marginBottom:8};
+const FLast = {row:"flex",alignItems:"flex-start",gap:0,borderTop:"1px solid #2C2C2E",paddingTop:8,marginTop:4};
+const FL_label = {color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0};
+
+function FilterRow({label,children,last}){
+  return(
+    <div style={{display:"flex",alignItems:last?"flex-start":"center",gap:0,marginBottom:last?0:8,borderTop:last?"1px solid #2C2C2E":"none",paddingTop:last?8:0,marginTop:last?4:0}}>
+      <span style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0,paddingTop:last?6:0}}>{label}</span>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>{children}</div>
+    </div>
+  );
+}
+
+function FBtn({label,sel,color,onClick}){
+  return(
+    <button onClick={onClick} style={{height:32,padding:"0 16px",borderRadius:7,border:`1.5px solid ${sel?color:"#3A3A3C"}`,background:sel?`${color}20`:"transparent",color:sel?color:"#636366",fontSize:12,fontWeight:sel?600:400,cursor:"pointer",transition:"all .15s",whiteSpace:"nowrap",minWidth:64,letterSpacing:"0.01em"}}>
+      {label}
+    </button>
+  );
+}
 
 export default function App(){
   const[gapiReady,setGapiReady]=useState(false);
@@ -315,54 +336,35 @@ export default function App(){
         {token&&rawRows.length>0&&(<>
 
           <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"16px 20px",marginBottom:20}}>
-            {[
-              {label:"Visão", chips:[
-                {l:"Evento", sel:selectedVisao==="Evento", c:"#0A84FF", fn:()=>setSelectedVisao("Evento")},
-                {l:"Artista", sel:selectedVisao==="Artista", c:"#BF5AF2", fn:()=>setSelectedVisao("Artista")},
-              ]},
-              {label:"Modelo", chips:[
-                {l:"Todos", sel:selectedTipo==="all", c:"#30D158", fn:()=>setSelectedTipo("all")},
-                {l:"Porta", sel:selectedTipo==="porta", c:"#FF9F0A", fn:()=>setSelectedTipo("porta")},
-                {l:"Cachê", sel:selectedTipo==="cache", c:"#FF453A", fn:()=>setSelectedTipo("cache")},
-              ]},
-              {label:"Ano", chips:[
-                {l:"Todos", sel:selectedAno==="all", c:"#0A84FF", fn:()=>setSelectedAno("all")},
-                ...anos.map(a=>({l:a, sel:selectedAno===a, c:"#0A84FF", fn:()=>setSelectedAno(a)})),
-              ]},
-            ].map(({label,chips})=>(
-              <div key={label} style={{display:"flex",alignItems:"center",gap:0,marginBottom:8}}>
-                <span style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0}}>{label}</span>
-                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                  {chips.map(ch=>(
-                    <button key={ch.l} onClick={ch.fn} style={{height:32,padding:"0 16px",borderRadius:7,border:`1.5px solid ${ch.sel?ch.c:"#3A3A3C"}`,background:ch.sel?`${ch.c}20`:"transparent",color:ch.sel?ch.c:"#636366",fontSize:12,fontWeight:ch.sel?600:400,cursor:"pointer",transition:"all .15s",whiteSpace:"nowrap",minWidth:64,letterSpacing:"0.01em"}}>
-                      {ch.l}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div style={{display:"flex",alignItems:"flex-start",gap:0,borderTop:"1px solid #2C2C2E",paddingTop:8,marginTop:4}}>
-              <span style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",width:64,flexShrink:0,paddingTop:7}}>Evento</span>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                <button onClick={()=>setSelectedEv("all")} style={{height:32,padding:"0 16px",borderRadius:7,border:`1.5px solid ${selectedEv==="all"?"#30D158":"#3A3A3C"}`,background:selectedEv==="all"?"#30D15820":"transparent",color:selectedEv==="all"?"#30D158":"#636366",fontSize:12,fontWeight:selectedEv==="all"?600:400,cursor:"pointer",transition:"all .15s",whiteSpace:"nowrap",minWidth:64}}>
-                  Todos
+            <FilterRow label="Visão">
+              <FBtn label="Evento" sel={selectedVisao==="Evento"} color="#0A84FF" onClick={()=>setSelectedVisao("Evento")}/>
+              <FBtn label="Artista" sel={selectedVisao==="Artista"} color="#BF5AF2" onClick={()=>setSelectedVisao("Artista")}/>
+            </FilterRow>
+            <FilterRow label="Modelo">
+              <FBtn label="Todos" sel={selectedTipo==="all"} color="#30D158" onClick={()=>setSelectedTipo("all")}/>
+              <FBtn label="Porta" sel={selectedTipo==="porta"} color="#FF9F0A" onClick={()=>setSelectedTipo("porta")}/>
+              <FBtn label="Cachê" sel={selectedTipo==="cache"} color="#FF453A" onClick={()=>setSelectedTipo("cache")}/>
+            </FilterRow>
+            <FilterRow label="Ano">
+              <FBtn label="Todos" sel={selectedAno==="all"} color="#0A84FF" onClick={()=>setSelectedAno("all")}/>
+              {anos.map(a=><FBtn key={a} label={a} sel={selectedAno===a} color="#0A84FF" onClick={()=>setSelectedAno(a)}/>)}
+            </FilterRow>
+            <FilterRow label="Evento" last>
+              <FBtn label="Todos" sel={selectedEv==="all"} color="#30D158" onClick={()=>setSelectedEv("all")}/>
+              {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
+                <button key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{padding:"5px 14px",borderRadius:7,border:`1.5px solid ${selectedEv===ev.name?ev.color:"#3A3A3C"}`,background:selectedEv===ev.name?`${ev.color}20`:"transparent",color:selectedEv===ev.name?ev.color:"#636366",fontSize:12,fontWeight:selectedEv===ev.name?600:400,cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center"}}>
+                  <span style={{whiteSpace:"nowrap",lineHeight:1.3}}>{ev.name}</span>
+                  <span style={{fontSize:10,opacity:.65,lineHeight:1.3}}>{ev.date} · {ev.res>=0?"+":"-"}{fmtP(Math.abs(ev.marg))}</span>
                 </button>
-                {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
-                  <button key={ev.name} onClick={()=>setSelectedEv(ev.name)} style={{padding:"5px 14px",borderRadius:7,border:`1.5px solid ${selectedEv===ev.name?ev.color:"#3A3A3C"}`,background:selectedEv===ev.name?`${ev.color}20`:"transparent",color:selectedEv===ev.name?ev.color:"#636366",fontSize:12,fontWeight:selectedEv===ev.name?600:400,cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center"}}>
-                    <span style={{whiteSpace:"nowrap",lineHeight:1.3}}>{ev.name}</span>
-                    <span style={{fontSize:10,opacity:.65,lineHeight:1.3}}>{ev.date} · {ev.res>=0?"+":"-"}{fmtP(Math.abs(ev.marg))}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+              ))}
+            </FilterRow>
             {selectedVisao==="Artista"&&(
-              <div style={{marginTop:10,padding:"8px 12px",background:"rgba(10,132,255,0.08)",border:"1px solid rgba(10,132,255,0.2)",borderRadius:8,fontSize:12,color:"#0A84FF"}}>
+              <div style={{marginTop:8,padding:"8px 12px",background:"rgba(10,132,255,0.08)",border:"1px solid rgba(10,132,255,0.2)",borderRadius:8,fontSize:12,color:"#0A84FF"}}>
                 Exibindo valores da coluna Artista (R$) da planilha
               </div>
             )}
           </div>
 
-          </div>
           {/* TITLE */}
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
             <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?"#0A84FF":eventStats.find(e=>e.name===selectedEv)?.color||"#0A84FF"}}/>
