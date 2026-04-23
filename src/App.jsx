@@ -36,8 +36,8 @@ function exportPDF(selName, stats, filtered, selectedVisao, fmt, fmtP, fmtN) {
     .footer { margin-top: 32px; font-size: 11px; color: #aaa; text-align: center; }
   `;
   const visaoBadge = selectedVisao === "Artista"
-    ? '<span class="badge art">🎤 Artista</span>'
-    : '<span class="badge ev">🎪 Evento</span>';
+    ? '<span class="badge art"> Artista</span>'
+    : '<span class="badge ev"> Evento</span>';
   const recRows = filtered.filter(e => e.cat === "Receita");
   const despRows = filtered.filter(e => e.cat === "Despesa");
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Relatório — ${selName}</title><style>${style}</style></head><body>
@@ -53,7 +53,7 @@ function exportPDF(selName, stats, filtered, selectedVisao, fmt, fmtP, fmtN) {
       <div class="card"><div class="card-label">Custo por Pessoa</div><div class="card-val red">${fmt(stats.cppub)}</div></div>
       <div class="card"><div class="card-label">ROI</div><div class="card-val ${stats.res >= 0 ? "green" : "red"}">${stats.desp > 0 ? ((stats.res/stats.desp)*100).toFixed(0)+"%" : "—"}</div></div>
     </div>
-    <h2 style="font-size:16px;margin-bottom:12px">📋 Lançamentos (${filtered.length})</h2>
+    <h2 style="font-size:16px;margin-bottom:12px"> Lançamentos (${filtered.length})</h2>
     <table>
       <thead><tr><th>Descrição</th><th>Categoria</th><th>Data</th><th style="text-align:right">Valor</th></tr></thead>
       <tbody>
@@ -114,8 +114,7 @@ const Tip=({active,payload,label,totalRec})=>{
 
 const KPI=({label,value,sub,color,icon,small})=>(
   <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"16px 20px",borderTop:`3px solid ${color}`,boxShadow:"0 2px 12px rgba(0,0,0,0.3)",position:"relative",overflow:"hidden"}}>
-    <div style={{position:"absolute",top:12,right:16,fontSize:22,opacity:.12}}>{icon}</div>
-    <p style={{color:"#8E8E93",fontSize:10,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:6}}>{label}</p>
+        <p style={{color:"#8E8E93",fontSize:10,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:6}}>{label}</p>
     <p style={{color,fontSize:small?18:22,fontWeight:800,letterSpacing:"-0.02em",lineHeight:1}}>{value}</p>
     {sub&&<p style={{color:"#8E8E93",fontSize:11,marginTop:4}}>{sub}</p>}
   </div>
@@ -130,9 +129,9 @@ const Card=({title,sub,children,style={}})=>(
 );
 
 const Chip=({label,selected,color,sub,onClick})=>(
-  <button onClick={onClick} style={{background:selected?`${color}22`:"#2C2C2E",color:selected?color:"#8E8E93",border:`1.5px solid ${selected?color:"#3A3A3C"}`,borderRadius:20,padding:sub?"5px 14px":"7px 14px",fontSize:12,fontWeight:500,cursor:"pointer",transition:"all .2s",display:"flex",flexDirection:"column",alignItems:"center",gap:1,whiteSpace:"nowrap"}}>
-    <span>{label}</span>
-    {sub&&<span style={{fontSize:10,opacity:.75,fontWeight:400}}>{sub}</span>}
+  <button onClick={onClick} style={{background:selected?`${color}18`:"#2C2C2E",color:selected?color:"#8E8E93",border:`1.5px solid ${selected?color:"#3A3A3C"}`,borderRadius:8,padding:"0 14px",fontSize:12,fontWeight:500,cursor:"pointer",transition:"all .15s",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",whiteSpace:"nowrap",height:sub?"44px":"36px",minWidth:"72px",letterSpacing:"0.01em"}}>
+    <span style={{lineHeight:1.2}}>{label}</span>
+    {sub&&<span style={{fontSize:10,opacity:.7,fontWeight:400,lineHeight:1.2}}>{sub}</span>}
   </button>
 );
 
@@ -272,7 +271,7 @@ export default function App(){
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           {LOGO_URL
             ? <img src={LOGO_URL} alt="Ao Vivão" style={{height:56,width:"auto",objectFit:"contain",filter:"drop-shadow(0 2px 8px rgba(0,0,0,0.5))"}}/>
-            : <div style={{width:36,height:36,borderRadius:10,background:"#FFB100",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>📻</div>
+            : <div style={{width:36,height:36,borderRadius:10,background:"#FFB100",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>AV</div>
           }
           <div>
             <p style={{fontSize:15,fontWeight:800,letterSpacing:"-0.02em",color:"#FFB100",fontFamily:"Arial Black,sans-serif"}}>Ao Vivão</p>
@@ -280,10 +279,10 @@ export default function App(){
           </div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          {token&&<button onClick={()=>exportPDF(selName,stats,filtered,selectedVisao,fmt,fmtP,fmtN)} style={{background:"rgba(243,211,152,0.15)",border:"1px solid #F3D398",color:"#F3D398",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>📄 Exportar PDF</button>}
-          {token&&<button onClick={fetchData} disabled={loading} style={{background:"rgba(243,211,152,0.15)",border:"1px solid #F3D398",color:"#F3D398",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>{loading?"⏳ Carregando…":"🔄 Sincronizar"}</button>}
+          {token&&<button onClick={()=>exportPDF(selName,stats,filtered,selectedVisao,fmt,fmtP,fmtN)} style={{background:"rgba(243,211,152,0.15)",border:"1px solid #F3D398",color:"#F3D398",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}> Exportar PDF</button>}
+          {token&&<button onClick={fetchData} disabled={loading} style={{background:"rgba(243,211,152,0.15)",border:"1px solid #F3D398",color:"#F3D398",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer"}}>{loading?"Carregando…":"Sincronizar"}</button>}
           {!token
-            ?<button onClick={configured?login:()=>{}} style={{background:"#FFB100",border:"none",color:"#560E11",borderRadius:10,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}>🔑 Entrar com Google</button>
+            ?<button onClick={configured?login:()=>{}} style={{background:"#FFB100",border:"none",color:"#560E11",borderRadius:10,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:"pointer"}}> Entrar com Google</button>
             :<div style={{display:"flex",alignItems:"center",gap:6,background:"rgba(243,211,152,0.15)",border:"1px solid #FFB100",borderRadius:10,padding:"7px 14px"}}><div style={{width:8,height:8,borderRadius:"50%",background:"#FFB100"}}/><p style={{fontSize:12,fontWeight:600,color:"#FFB100"}}>Conectado</p></div>
           }
         </div>
@@ -291,65 +290,65 @@ export default function App(){
 
       <div style={{padding:"24px 28px",maxWidth:1400,margin:"0 auto"}}>
 
-        {error&&<div style={{background:`${C.accent2}11`,border:`1px solid ${C.accent2}44`,borderRadius:12,padding:"14px 18px",marginBottom:20,color:C.accent2,fontSize:13}}>⚠️ {error}</div>}
+        {error&&<div style={{background:`${C.accent2}11`,border:`1px solid ${C.accent2}44`,borderRadius:12,padding:"14px 18px",marginBottom:20,color:C.accent2,fontSize:13}}> {error}</div>}
 
         {!token&&configured&&(
           <div style={{textAlign:"center",padding:"80px 20px"}}>
             <div style={{fontSize:56,marginBottom:16}}>🔐</div>
             <p style={{fontSize:22,fontWeight:800,marginBottom:8}}>Faça login para carregar os dados</p>
-            <button onClick={login} style={{background:C.accent1,border:"none",color:C.bg,borderRadius:12,padding:"14px 32px",fontSize:15,fontWeight:700,cursor:"pointer"}}>🔑 Entrar com Google</button>
+            <button onClick={login} style={{background:C.accent1,border:"none",color:C.bg,borderRadius:12,padding:"14px 32px",fontSize:15,fontWeight:700,cursor:"pointer"}}> Entrar com Google</button>
           </div>
         )}
 
         {token&&rawRows.length===0&&!loading&&(
           <div style={{textAlign:"center",padding:"60px 20px"}}>
-            <div style={{fontSize:48,marginBottom:12}}>📊</div>
+            <div style={{fontSize:48,marginBottom:12}}></div>
             <p style={{fontSize:18,fontWeight:700,marginBottom:8}}>Planilha vazia ou sem dados</p>
             <p style={{color:"#8E8E93",fontSize:13,lineHeight:1.7}}>
               Certifique-se que sua planilha tem as colunas:<br/>
               <code style={{color:C.accent4,background:`${C.accent4}11`,padding:"2px 8px",borderRadius:4}}>Evento | Descrição | Categoria | Data | Valor | Público</code>
             </p>
-            <button onClick={fetchData} style={{marginTop:20,background:C.accent3,border:"none",color:C.bg,borderRadius:10,padding:"11px 24px",fontSize:13,fontWeight:700,cursor:"pointer"}}>🔄 Tentar novamente</button>
+            <button onClick={fetchData} style={{marginTop:20,background:C.accent3,border:"none",color:C.bg,borderRadius:10,padding:"11px 24px",fontSize:13,fontWeight:700,cursor:"pointer"}}> Tentar novamente</button>
           </div>
         )}
 
         {token&&rawRows.length>0&&(<>
 
-          <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:16,padding:"16px 20px",marginBottom:20}}>
+          <div style={{background:"#1C1C1E",border:"1px solid #3A3A3C",borderRadius:14,padding:"14px 18px",marginBottom:20}}>
           {/* VISÃO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Visão:</p>
-            <Chip label="🎪 Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
-            <Chip label="🎤 Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
+            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Visão:</p>
+            <Chip label="Evento" selected={selectedVisao==="Evento"} color={C.accent5} onClick={()=>setSelectedVisao("Evento")}/>
+            <Chip label="Artista" selected={selectedVisao==="Artista"} color={C.accent6} onClick={()=>setSelectedVisao("Artista")}/>
           </div>
           {selectedVisao==="Artista"&&(
             <div style={{background:"rgba(10,132,255,0.1)",border:"1px solid rgba(10,132,255,0.3)",borderRadius:10,padding:"8px 14px",marginBottom:10,fontSize:12,color:"#0A84FF"}}>
-              🎤 Exibindo valores da coluna <strong>Artista (R$)</strong> da planilha
+              Exibindo valores da coluna <strong>Artista (R$)</strong> da planilha
             </div>
           )}
 
           {/* MODELO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Modelo:</p>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
+            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Modelo:</p>
             <Chip label="Todos" selected={selectedTipo==="all"} color={C.accent1} onClick={()=>setSelectedTipo("all")}/>
-            <Chip label="🎟️ Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
-            <Chip label="🎤 Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
+            <Chip label="Porta" selected={selectedTipo==="porta"} color={C.accent3} onClick={()=>setSelectedTipo("porta")}/>
+            <Chip label="Cachê" selected={selectedTipo==="cache"} color={C.accent4} onClick={()=>setSelectedTipo("cache")}/>
           </div>
 
           {/* ANO SELECTOR */}
-          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Ano:</p>
+          <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"stretch"}}>
+            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Ano:</p>
             <Chip label="Todos" selected={selectedAno==="all"} color={C.accent4} onClick={()=>setSelectedAno("all")}/>
             {anos.map(ano=>(<Chip key={ano} label={ano} selected={selectedAno===ano} color={C.accent4} onClick={()=>setSelectedAno(ano)}/>))}
           </div>
 
           {/* EVENT SELECTOR */}
           <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap",alignItems:"center"}}>
-            <p style={{color:"#8E8E93",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",marginRight:4}}>Evento:</p>
+            <p style={{color:"#636366",fontSize:10,fontWeight:500,letterSpacing:"0.08em",textTransform:"uppercase",marginRight:6,display:"flex",alignItems:"center",height:"36px"}}>Evento:</p>
             <Chip label="Todos" selected={selectedEv==="all"} color={C.accent3} onClick={()=>setSelectedEv("all")}/>
             {eventStats.filter(ev=>(selectedAno==="all"||ev.year===selectedAno)&&(selectedTipo==="all"||ev.tipo===selectedTipo)).map(ev=>(
               <Chip key={ev.name} label={ev.name} selected={selectedEv===ev.name} color={ev.color}
-                sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"✅":"⚠️"} ${fmtP(ev.marg)}`}
+                sub={`${ev.date?ev.date+" · ":""}${ev.res>=0?"+"  :"-"} ${fmtP(ev.marg)}`}
                 onClick={()=>setSelectedEv(ev.name)}/>
             ))}
           </div>
@@ -360,34 +359,34 @@ export default function App(){
             <div style={{width:4,height:26,borderRadius:2,background:selectedEv==="all"?"#0A84FF":eventStats.find(e=>e.name===selectedEv)?.color||"#0A84FF"}}/>
             <h2 style={{fontSize:20,fontWeight:700,letterSpacing:"-0.02em",color:"#F2F2F7"}}>{selName}</h2>
             <span style={{background:selectedVisao==="Artista"?"#2e1040":"#0a1e2e",color:selectedVisao==="Artista"?C.accent6:C.accent5,fontSize:11,fontWeight:700,borderRadius:20,padding:"3px 12px"}}>
-              {selectedVisao==="Artista"?"🎤 Artista":"🎪 Evento"}
+              {selectedVisao==="Artista"?"Artista":"Evento"}
             </span>
             {selectedEv!=="all"&&(
               <span style={{background:stats.res>=0?"#0a2e1e":"#2e0a14",color:stats.res>=0?C.accent1:C.accent2,fontSize:11,fontWeight:700,borderRadius:20,padding:"3px 12px"}}>
-                {stats.res>=0?"✅ Lucrativo":"⚠️ Prejuízo"}
+                {stats.res>=0?"Lucrativo":"Prejuízo"}
               </span>
             )}
           </div>
 
           {/* KPIs FINANCEIROS */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:14}}>
-            <KPI label="Receita Total"  value={fmt(stats.rec)}  color={C.accent1} icon="💰" sub={`${filtered.filter(e=>e.cat==="Receita").length} lançamentos`}/>
-            <KPI label="Despesa Total"  value={fmt(stats.desp)} color={C.accent2} icon="💸" sub={`${filtered.filter(e=>e.cat==="Despesa").length} lançamentos`}/>
-            <KPI label="Resultado"      value={fmt(stats.res)}  color={stats.res>=0?C.accent1:C.accent2} icon="📈" sub={stats.res>=0?"Saldo positivo":"Saldo negativo"}/>
-            <KPI label="Margem"         value={fmtP(stats.marg)} color={C.accent4} icon="🎯" sub="sobre receita"/>
+            <KPI label="Receita Total"  value={fmt(stats.rec)}  color={C.accent1} sub={`${filtered.filter(e=>e.cat==="Receita").length} lançamentos`}/>
+            <KPI label="Despesa Total"  value={fmt(stats.desp)} color={C.accent2} sub={`${filtered.filter(e=>e.cat==="Despesa").length} lançamentos`}/>
+            <KPI label="Resultado"      value={fmt(stats.res)}  color={stats.res>=0?C.accent1:C.accent2} sub={stats.res>=0?"Saldo positivo":"Saldo negativo"}/>
+            <KPI label="Margem"         value={fmtP(stats.marg)} color={C.accent4} sub="sobre receita"/>
           </div>
 
           {/* KPIs PÚBLICO */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:22}}>
-            <KPI label="Público Total"    value={fmtN(selectedEv==="all"?pubTotal:stats.pub)} color={C.accent5}  icon="👥" sub={selectedEv==="all"?`${events.length} eventos`:"pessoas"}/>
-            <KPI label="Ticket Médio"     value={fmt(stats.ticket)}  color={C.accent3} icon="🎟️" sub="receita por pessoa"/>
-            <KPI label="Custo por Pessoa" value={fmt(stats.cppub)}   color={C.accent2} icon="💡" sub="despesa por pessoa" small/>
-            <KPI label="ROI"              value={stats.desp>0?`${((stats.res/stats.desp)*100).toFixed(0)}%`:"—"} color={stats.res>=0?C.accent1:C.accent2} icon="📊" sub="retorno sobre despesa"/>
+            <KPI label="Público Total"    value={fmtN(selectedEv==="all"?pubTotal:stats.pub)} color={C.accent5}  sub={selectedEv==="all"?`${events.length} eventos`:"pessoas"}/>
+            <KPI label="Ticket Médio"     value={fmt(stats.ticket)}  color={C.accent3} sub="receita por pessoa"/>
+            <KPI label="Custo por Pessoa" value={fmt(stats.cppub)}   color={C.accent2} sub="despesa por pessoa" small/>
+            <KPI label="ROI"              value={stats.desp>0?`${((stats.res/stats.desp)*100).toFixed(0)}%`:"—"} color={stats.res>=0?C.accent1:C.accent2} sub="retorno sobre despesa"/>
           </div>
 
           {/* TABS */}
           <div style={{display:"flex",gap:4,marginBottom:18,background:"#1C1C1E",borderRadius:12,padding:4,width:"fit-content",border:"1px solid #3A3A3C"}}>
-            {[["overview","📊 Visão Geral"],["publico","👥 Público"],["custos","💸 Custos"],["entries","📋 Lançamentos"],["compare","🔀 Comparar"]].map(([t,l])=>(
+            {[["overview","Visão Geral"],["publico","Público"],["custos","Custos"],["entries","Lançamentos"],["compare","Comparar"]].map(([t,l])=>(
               <button key={t} onClick={()=>setTab(t)} style={{background:tab===t?"#3A3A3C":"transparent",color:tab===t?"#F2F2F7":"#8E8E93",border:"none",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .2s"}}>{l}</button>
             ))}
           </div>
@@ -582,7 +581,7 @@ export default function App(){
                         <span style={{background:C.bg,color:C.muted,fontSize:10,fontWeight:700,borderRadius:20,padding:"2px 8px"}}>#{i+1}</span>
                         <p style={{fontSize:14,fontWeight:700,marginTop:5,lineHeight:1.3}}>{ev.name}</p>
                       </div>
-                      <span style={{fontSize:18}}>{i===0?"🥇":i===1?"🥈":i===2?"🥉":"📊"}</span>
+                      <span style={{fontSize:18}}>{i===0?"#1":i===1?"#2":i===2?"#3":"–"}</span>
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
                       {[["Receita",fmt(ev.rec),C.accent1],["Despesa",fmt(ev.desp),C.accent2],["Resultado",fmt(ev.res),ev.res>=0?C.accent1:C.accent2],["Margem",fmtP(ev.marg),C.accent4],["Público",fmtN(ev.pub),C.accent5],["Ticket Médio",fmt(ev.ticket),C.accent3]].map(([l,v,c])=>(
